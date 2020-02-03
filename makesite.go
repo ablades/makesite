@@ -91,14 +91,9 @@ func flagActive(name string) bool {
 func main() {
 	//Defines a flag called filePtr
 	filePtr := flag.String("file", "first-post.txt", "name of file contents to read")
-
 	dirPtr := flag.String("dir", ".", "directory to pull files from")
 	//Called after all flags have been defined
 	flag.Parse()
-
-	content := readFile(*filePtr)
-
-	template := renderTemplate(content)
 
 	//Parse given directory
 	if flagActive("dir") {
@@ -106,11 +101,18 @@ func main() {
 
 		//Create templates for all files in directory
 		for _, file := range files {
+			content := readFile(file)
+
+			template := renderTemplate(content)
+
 			fileName := strings.SplitN(file, ".", 2)[0] + ".html"
 			saveFile(template, fileName)
 		}
 
 	} else {
+		content := readFile(*filePtr)
+
+		template := renderTemplate(content)
 		//Gets name of file and changes extension
 		fileName := strings.SplitN(*filePtr, ".", 2)[0] + ".html"
 		saveFile(template, fileName)
