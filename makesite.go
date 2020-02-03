@@ -3,8 +3,11 @@ package main
 import (
 	"bytes"
 	"flag"
+	"fmt"
 	"html/template"
 	"io/ioutil"
+	"log"
+	"path/filepath"
 	"strings"
 )
 
@@ -54,9 +57,25 @@ func saveFile(template string, fileName string) bool {
 	return true
 }
 
+func directorySearch(directory string) {
+	files, err := ioutil.ReadDir(directory)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		if filepath.Ext(file.Name()) == ".txt" {
+			fmt.Println(file.Name())
+		}
+
+	}
+}
+
 func main() {
 	//Defines a flag called filePtr
 	filePtr := flag.String("file", "first-post.txt", "name of file contents to read")
+
+	dirPtr := flag.String("dir", ".", "directory to pull files from")
 	//Called after all flags have been defined
 	flag.Parse()
 
@@ -64,6 +83,7 @@ func main() {
 
 	template := renderTemplate(content)
 
+	directorySearch(*dirPtr)
 	//Gets name of file and changes extension
 	fileName := strings.SplitN(*filePtr, ".", 2)[0] + ".html"
 	saveFile(template, fileName)
