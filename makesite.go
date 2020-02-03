@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"html/template"
 	"io/ioutil"
+	"strings"
 )
 
 type post struct {
@@ -30,6 +32,8 @@ func renderTemplate(content string) string {
 	buff := new(bytes.Buffer)
 	//will get the template at filename and store it in t. t can then be executed to show the template.
 	t := template.Must(template.New("template.tmpl").ParseFiles(paths...))
+
+	//Run template save contents to buffer
 	err := t.Execute(buff, post{User: "Audi", Content: content})
 	if err != nil {
 		panic(err)
@@ -51,9 +55,16 @@ func saveFile(template string, fileName string) bool {
 }
 
 func main() {
-	content := readFile("first-post.txt")
-	t := renderTemplate(content)
-	print(t)
-	saveFile(t, "first-post.html")
+	//Defines a flag called filePtr
+	filePtr := flag.String("file", "first-post.txt", "name of file contents to read")
+	//Called after all flags have been defined
+	flag.Parse()
 
+	content := readFile(*filePtr)
+
+	t := renderTemplate(content)
+
+	//Gets name of file and changes extension
+	fileName := strings.SplitN(*filePtr, ".", 2)[0] + ".html"
+	saveFile(t, fileName)
 }
