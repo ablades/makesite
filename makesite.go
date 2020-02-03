@@ -77,7 +77,7 @@ func directorySearch(directory string) []string {
 }
 
 //Checks if a specified flag is active
-func flagActive(name string) bool {
+func activeFlag(name string) bool {
 	active := false
 	flag.Visit(func(f *flag.Flag) {
 		if f.Name == name {
@@ -96,7 +96,7 @@ func main() {
 	flag.Parse()
 
 	//Parse given directory
-	if flagActive("dir") {
+	if activeFlag("dir") {
 		files := directorySearch(*dirPtr)
 
 		//Create templates for all files in directory
