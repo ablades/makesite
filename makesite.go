@@ -57,18 +57,35 @@ func saveFile(template string, fileName string) bool {
 	return true
 }
 
-func directorySearch(directory string) {
+func directorySearch(directory string) []string {
 	files, err := ioutil.ReadDir(directory)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	var textFiles []string
+
+	//Check files in directory for a txt extension
 	for _, file := range files {
 		if filepath.Ext(file.Name()) == ".txt" {
 			fmt.Println(file.Name())
+			textFiles = append(textFiles, file.Name())
 		}
-
 	}
+
+	return textFiles
+}
+
+//Checks if a specified flag is active
+func flagActive(name string) bool {
+	active := false
+	flag.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			active = true
+		}
+	})
+
+	return active
 }
 
 func main() {
@@ -83,8 +100,20 @@ func main() {
 
 	template := renderTemplate(content)
 
-	directorySearch(*dirPtr)
-	//Gets name of file and changes extension
-	fileName := strings.SplitN(*filePtr, ".", 2)[0] + ".html"
-	saveFile(template, fileName)
+	//Parse given directory
+	if flagActive("dir") {
+		files := directorySearch(*dirPtr)
+
+		//Create templates for all files in directory
+		for _, file := range files {
+			fileName := strings.SplitN(file, ".", 2)[0] + ".html"
+			saveFile(template, fileName)
+		}
+
+	} else {
+		//Gets name of file and changes extension
+		fileName := strings.SplitN(*filePtr, ".", 2)[0] + ".html"
+		saveFile(template, fileName)
+	}
+
 }
