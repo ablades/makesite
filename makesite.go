@@ -62,9 +62,9 @@ func main() {
 
 	content := readFile(*filePtr)
 
-	t := renderTemplate(content)
+	template := renderTemplate(content)
 
 	//Gets name of file and changes extension
 	fileName := strings.SplitN(*filePtr, ".", 2)[0] + ".html"
-	saveFile(t, fileName)
+	saveFile(template, fileName)
 }
