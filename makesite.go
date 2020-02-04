@@ -36,7 +36,7 @@ func renderTemplate(content string) string {
 	//will get the template at filename and store it in t. t can then be executed to show the template.
 	t := template.Must(template.New("template.tmpl").ParseFiles(paths...))
 
-	//Run template save contents to buffer
+	//Run template save contents to buffer(temporary storage)
 	err := t.Execute(buff, post{User: "Audi", Content: content})
 	if err != nil {
 		panic(err)
@@ -46,8 +46,8 @@ func renderTemplate(content string) string {
 }
 
 //Saves rendered template to a file
-func saveFile(template string, fileName string) bool {
-	bytesToWrite := []byte(template)
+func saveFile(buffer string, fileName string) bool {
+	bytesToWrite := []byte(buffer)
 	err := ioutil.WriteFile(fileName, bytesToWrite, 0644)
 
 	if err != nil {
