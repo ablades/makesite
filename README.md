@@ -1,5 +1,6 @@
 # 🔗 makesite
 [![Go Report Card](https://goreportcard.com/badge/github.com/ablades/makesite)](https://goreportcard.com/report/github.com/ablades/makesite)
+
 _Create your own custom Static Site Generator (like [Jekyll](https://jekyllrb.com/) or [Hugo](https://gohugo.io/)) by cloning and fulfilling the requirements in this repo!_
 
 ### 📚 Table of Contents

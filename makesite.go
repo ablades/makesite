@@ -88,6 +88,10 @@ func activeFlag(name string) bool {
 	return active
 }
 
+func parseMarkdown() {
+
+}
+
 func main() {
 	//Defines a flag called filePtr
 	filePtr := flag.String("file", "first-post.txt", "name of file contents to read")
