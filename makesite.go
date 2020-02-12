@@ -60,6 +60,7 @@ func saveFile(buffer string, fileName string) bool {
 	return true
 }
 
+//Returns a list of files in a given directory
 func directorySearch(directory string) []string {
 	files, err := ioutil.ReadDir(directory)
 	if err != nil {
@@ -91,11 +92,13 @@ func activeFlag(name string) bool {
 	return active
 }
 
-func parseMarkdown(fileName string) []byte {
+//Converts markdown files to html
+func parseMarkdown(fileName string) string {
 
 	extension := strings.SplitN(fileName, ".", 2)[1]
+
 	//Verify file is a markdown file
-	if extension != ".md" {
+	if extension != "md" {
 		err := fmt.Errorf("file %v is not a markdown file", fileName)
 		panic(err.Error())
 	}
@@ -103,7 +106,7 @@ func parseMarkdown(fileName string) []byte {
 	mdBytes := []byte(readFile(fileName))
 	output := markdown.ToHTML(mdBytes, nil, nil)
 
-	return output
+	return string(output)
 
 }
 
@@ -132,7 +135,12 @@ func main() {
 		os.Exit(0)
 	} else if activeFlag("md") {
 
-		parseMarkdown(*markdownPtr)
+		mdHTML := parseMarkdown(*markdownPtr)
+		template := renderTemplate(mdHTML)
+
+		//Save as an html file
+		fileName := strings.SplitN(*markdownPtr, ".", 2)[0] + ".html"
+		saveFile(template, fileName)
 
 		//Exit program successfully
 		os.Exit(0)
