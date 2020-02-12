@@ -7,8 +7,11 @@ import (
 	"html/template"
 	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/gomarkdown/markdown"
 )
 
 type post struct {
@@ -88,7 +91,19 @@ func activeFlag(name string) bool {
 	return active
 }
 
-func parseMarkdown() {
+func parseMarkdown(fileName string) []byte {
+
+	extension := strings.SplitN(fileName, ".", 2)[1]
+	//Verify file is a markdown file
+	if extension != ".md" {
+		err := fmt.Errorf("file %v is not a markdown file", fileName)
+		panic(err.Error())
+	}
+
+	mdBytes := []byte(readFile(fileName))
+	output := markdown.ToHTML(mdBytes, nil, nil)
+
+	return output
 
 }
 
@@ -96,10 +111,11 @@ func main() {
 	//Defines a flag called filePtr
 	filePtr := flag.String("file", "first-post.txt", "name of file contents to read")
 	dirPtr := flag.String("dir", ".", "directory to pull files from")
+	markdownPtr := flag.String("md", "test.md", "markdown file to convert to html")
 	//Called after all flags have been defined
 	flag.Parse()
 
-	//Parse given directory
+	//Parse flag actions
 	if activeFlag("dir") {
 		files := directorySearch(*dirPtr)
 
@@ -112,14 +128,21 @@ func main() {
 			fileName := strings.SplitN(file, ".", 2)[0] + ".html"
 			saveFile(template, fileName)
 		}
+		//Exit program successfully
+		os.Exit(0)
+	} else if activeFlag("md") {
 
-	} else {
-		content := readFile(*filePtr)
+		parseMarkdown(*markdownPtr)
 
-		template := renderTemplate(content)
-		//Gets name of file and changes extension
-		fileName := strings.SplitN(*filePtr, ".", 2)[0] + ".html"
-		saveFile(template, fileName)
+		//Exit program successfully
+		os.Exit(0)
+
 	}
+
+	content := readFile(*filePtr)
+	template := renderTemplate(content)
+	//Gets name of file and changes extension
+	fileName := strings.SplitN(*filePtr, ".", 2)[0] + ".html"
+	saveFile(template, fileName)
 
 }
